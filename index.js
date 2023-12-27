@@ -1,5 +1,6 @@
 const { Telegraf } = require("telegraf");
 const axios = require("axios");
+const Alexa = require("ask-sdk-core");
 require("dotenv").config();
 
 // Create a bot
@@ -58,4 +59,22 @@ async function run() {
   }
 }
 
-run();
+const LaunchRequestHandler = {
+  canHandle(handlerInput) {
+    return (
+      Alexa.getRequestType(handlerInput.requestEnvelope) === "LaunchRequest"
+    );
+  },
+  handle(handlerInput) {
+    run();
+    const speakOutput = "Your skill has been triggered!";
+    return handlerInput.responseBuilder.speak(speakOutput).getResponse();
+  },
+};
+
+exports.handler = Alexa.SkillBuilders.custom()
+  .addRequestHandlers(
+    LaunchRequestHandler
+    // Add other handlers here...
+  )
+  .lambda();
