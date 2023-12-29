@@ -1,6 +1,6 @@
+// Import the required modules
 const { Telegraf } = require("telegraf");
 const axios = require("axios");
-const Alexa = require("ask-sdk-core");
 require("dotenv").config();
 
 // Create a bot
@@ -9,8 +9,8 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 // Choose the topic to connect
 const query = "Artificial Intelligence";
 
-// Function
-async function run() {
+// Export the function for AWS Lambda
+exports.handler = async function () {
   try {
     // Fetch weather
     const weatherResponse = await axios.get(
@@ -57,24 +57,4 @@ async function run() {
   } catch (error) {
     console.error(error);
   }
-}
-
-const LaunchRequestHandler = {
-  canHandle(handlerInput) {
-    return (
-      Alexa.getRequestType(handlerInput.requestEnvelope) === "LaunchRequest"
-    );
-  },
-  handle(handlerInput) {
-    run();
-    const speakOutput = "Your skill has been triggered!";
-    return handlerInput.responseBuilder.speak(speakOutput).getResponse();
-  },
 };
-
-exports.handler = Alexa.SkillBuilders.custom()
-  .addRequestHandlers(
-    LaunchRequestHandler
-    // Add other handlers here...
-  )
-  .lambda();
